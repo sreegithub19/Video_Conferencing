@@ -189,8 +189,25 @@ hr {
 <video id="screen-viewer" controls playsinline autoplay></video>
 
 <div style="width: 20%; height: 100%; position: absolute;left:0;">
-    <video id="main-video" controls playsinline autoplay></video>
-    <div id="other-videos"></div>
+	<video id="main-video" controls playsinline autoplay></video>
+	
+<!-------updated code--------------------------------------------->
+<div id="other-videos" style="position:absolute;">
+        <video width="140" height="140" controls autoplay id="videoElement"></video>
+        <p>
+          <button id=audio>
+            Stop audio   <!--to stop audio permanently(till the page is again refreshed)-->
+          </button>
+          <button id=video>
+            Stop video  <!--to stop video permanently(till the page is again refreshed)-->
+          </button>
+          <button id=both>
+            Stop both   <!--to stop both audio and video permanently(till the page is again refreshed)-->
+          </button>
+          <input type="checkbox" onclick="mute()">Mute video</input>  
+        </p>
+    </div>
+<!------------------------------------------------------------------------>
     <hr>
     <div style="padding: 5px 10px;">
         <div id="onUserStatusChanged"></div>
@@ -231,6 +248,35 @@ hr {
         params[d(match[1])] = d(match[2]);
     window.params = params;
 })();
+//////////////////-updated code-/////////////////////////////////////////////
+var videoo= document.querySelector("#videoElement");
+  navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+        videoo:true
+      })
+      .then(stream => {
+        window.localStream = stream;
+        //document.querySelector('video').src = URL.createObjectURL(stream);
+        videoo.srcObject = stream;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  audio.onclick = function() {
+    localStream.getAudioTracks()[0].stop();
+  }
+  video.onclick = function() {
+    localStream.getVideoTracks()[0].stop();
+  }
+  var mute = () => videoo.srcObject.getTracks().forEach(t => t.enabled = !t.enabled);
+  
+  both.onclick = function() {
+    localStream.getTracks().forEach((track) => {
+      track.stop();
+    })
+  }  
+////////////////////////////////////////////////////////////////////////////////
 
 var connection = new RTCMultiConnection();
 
